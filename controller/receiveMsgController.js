@@ -33,7 +33,7 @@ module.exports = {
 const echoData = (receiveData) =>{
   console.log(receiveData);
   // echo 回覆訊息設定
-  let applyMsg = {
+  let applyData = {
     "recipient":{
       "id": receiveData.senderId 
     },
@@ -42,7 +42,7 @@ const echoData = (receiveData) =>{
       "text": receiveData.message
     }
    }
-   console.log(applyMsg);
+   axiosGo(applyData)
    
 }
 
@@ -51,6 +51,6 @@ const axiosGo = async (applyData) => {
   try{
     await axios.post(hahaAPI , applyData)
   }catch(err){
-    error: 'axiosGo Error  ' + (err)
+    error: 'axiosGo Error ' + (err)
   }
 }
