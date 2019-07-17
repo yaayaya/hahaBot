@@ -15,9 +15,9 @@ module.exports = {
       let message = req.body.messaging[0].message.text
       // data整合包
       let receiveData = {time : time , senderId : senderId , message : message}
-      
-      // echo 測試
-      echoData(receiveData)
+     
+      // 判斷訊息
+      chooseFunction(receiveData)
       
       // 成功時發送狀態200 
       res.status(200).send('ya')
