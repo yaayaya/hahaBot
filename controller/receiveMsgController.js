@@ -75,8 +75,8 @@ const stickerMsgSend = async (receiveData) => {
     },
     "message":{
       "type":"sticker",
-      "sticker_group": 25,
-      "sticker_id": 12
+      "sticker_group": '25',
+      "sticker_id": '12'
     }
    }
    await axiosGo(applyMsg1)
