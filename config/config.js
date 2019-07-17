@@ -2,7 +2,7 @@ const path = require('path')
 
 // 連線設定 3000 || process.env.PORT, 
 module.exports = {
-    port: 3000 || process.env.PORT,    
+    port: process.env.PORT,    
     // db: {
     //     databaser: process.env.DB_NAME || 'parkservice',
     //     user: process.env.DB_USER || null,
