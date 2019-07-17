@@ -1,9 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser')
-const path = require('path');
 const app = express();
 const config = require('./config/config')
-const axios = require('axios');
 
 // app 加載使用套件
 app.use(express.static(__dirname + '/public'));

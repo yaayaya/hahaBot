@@ -29,9 +29,63 @@ module.exports = {
   }
 }
 
+// 判斷使用者訊息  選出要執行方法
+const chooseFunction = (receiveData) => {
+  if (receiveData.message == '文字訊息'){
+    textMsgSend(receiveData)
+  }
+  else if (receiveData.message == '貼圖訊息'){
+    stickerMsgSend(receiveData)
+  }
+  else{
+    echoData(receiveData)
+  }
+}
+
+// 文字訊息 function
+const textMsgSend = async (receiveData) =>{
+  let applyMsg1 = {
+    "recipient":{
+      "id": receiveData.senderId 
+    },
+    "message":{
+      "type":"text",
+      "text":"這裡是文字訊息ya  下面展示send的json"
+    }
+   }
+   await axiosGo(applyMsg1)
+   let applyMsg2 = {
+    "recipient":{
+      "id": receiveData.senderId 
+    },
+    "message":{
+      "type":"text",
+      "text":  JSON.stringify(applyMsg1)
+    }
+   }
+   await axiosGo(applyMsg2)
+
+}
+
+// 圖片訊息
+const stickerMsgSend = async (receiveData) => {
+  let applyMsg1 = {
+    "recipient":{
+      "id": receiveData.senderId
+    },
+    "message":{
+      "type":"sticker",
+      "sticker_group": 25,
+      "sticker_id": 12
+    }
+   }
+   await axiosGo(applyMsg1)
+
+
+}
+
 // 回音機
 const echoData = (receiveData) =>{
-  console.log(receiveData);
   // echo 回覆訊息設定
   let applyData = {
     "recipient":{
@@ -45,6 +99,8 @@ const echoData = (receiveData) =>{
    axiosGo(applyData)
    
 }
+
+
 
 // 發出訊息 
 const axiosGo = async (applyData) => {
