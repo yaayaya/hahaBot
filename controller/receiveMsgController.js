@@ -8,7 +8,6 @@ const uBikeApiUrl = 'http://data.ntpc.gov.tw/api/v1/rest/datastore/382000000A-00
 
 
 
-uBikeDataSend("ubike/板橋區")
 
 
 
