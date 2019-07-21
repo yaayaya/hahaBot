@@ -46,8 +46,7 @@ const chooseFunction = (receiveData) => {
     stickerMsgSend(receiveData)
   }
   else if (data[0] == 'ubike' || data[0] == 'uBike'){
-    receiveData.message = data[1]
-    uBikeDataSend(receiveData)
+    uBikeDataSend(receiveData,data[1])
   }
   else{
     echoData(receiveData)
@@ -55,7 +54,7 @@ const chooseFunction = (receiveData) => {
 }
 
 // uBike 查詢指令接收
-const uBikeDataSend = async(receiveData)=>{  
+const uBikeDataSend = async(receiveData,location)=>{  
   const uBikeDatas = (await axios.get(uBikeApiUrl)).data
   if (uBikeDatas.success == true){
     // 創造空陣列裝填整理資料
@@ -63,13 +62,13 @@ const uBikeDataSend = async(receiveData)=>{
     // 整理資料
     for (let i = 0; i < (uBikeDatas.result.records).length; i++) {
       // 判定區域
-      if (uBikeDatas.result.records[i].sarea == receiveData){
+      if (uBikeDatas.result.records[i].sarea == location){
         filterDatas.push(uBikeDatas.result.records[i].sna)
       }
     }
     // 整理完的資料 
     let b = filterDatas.join("\n")
-    // 發送
+    // 發送a
     let applyMsg1 = {
       "recipient":{
         "id": receiveData.senderId 
