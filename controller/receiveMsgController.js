@@ -46,7 +46,7 @@ const chooseFunction = (receiveData) => {
   else if (receiveData.message == '貼圖訊息'){
     stickerMsgSend(receiveData)
   }
-  else if (data[0] == 'uBike'){
+  else if (data[0] == 'ubike' || data[0] == 'uBike'){
     receiveData.message = data[1]
     uBikeDataSend(receiveData)
   }
@@ -81,6 +81,19 @@ const uBikeDataSend = async(receiveData)=>{
       }
      }
      await axiosGo(applyMsg1)
+  }
+  else {
+       // 發送
+       let applyMsg1 = {
+        "recipient":{
+          "id": receiveData.senderId 
+        },
+        "message":{
+          "type":"text",
+          "text": '大失敗'
+        }
+       }
+       await axiosGo(applyMsg1) 
   }
 }
 
