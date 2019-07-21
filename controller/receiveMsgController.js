@@ -1,8 +1,16 @@
 const axios = require('axios');
-
 let hahabot = require('../config/config').hahaBot
 // api 網址
 const hahaAPI  = 'https://us-central1-hahamut-8888.cloudfunctions.net/messagePush?access_token=' + hahabot.AccessToken
+
+
+const uBikeApiUrl = 'http://data.ntpc.gov.tw/api/v1/rest/datastore/382000000A-000352-001'
+
+
+
+uBikeDataSend("ubike/板橋區")
+
+
 
 module.exports = {
   async filterData (req,res) {
@@ -15,8 +23,8 @@ module.exports = {
       let message = req.body.messaging[0].message.text
       // data整合包
       let receiveData = {time : time , senderId : senderId , message : message}
-     
-      // 判斷訊息
+      
+      // 判斷所有收到訊息資料 
       chooseFunction(receiveData)
       
       // 成功時發送狀態200 
@@ -31,14 +39,48 @@ module.exports = {
 
 // 判斷使用者訊息  選出要執行方法
 const chooseFunction = (receiveData) => {
+  let data = receiveData.message.split("/")
   if (receiveData.message == '文字訊息'){
     textMsgSend(receiveData)
   }
   else if (receiveData.message == '貼圖訊息'){
     stickerMsgSend(receiveData)
   }
+  else if (data[0] == 'uBike'){
+    receiveData.message = data[1]
+    uBikeDataSend(receiveData)
+  }
   else{
     echoData(receiveData)
+  }
+}
+
+// uBike 查詢指令接收
+const uBikeDataSend = async(receiveData)=>{  
+  const uBikeDatas = (await axios.get(uBikeApiUrl)).data
+  if (uBikeDatas.success == true){
+    // 創造空陣列裝填整理資料
+    let filterDatas = []
+    // 整理資料
+    for (let i = 0; i < (uBikeDatas.result.records).length; i++) {
+      // 判定區域
+      if (uBikeDatas.result.records[i].sarea == receiveData){
+        filterDatas.push(uBikeDatas.result.records[i].sna)
+      }
+    }
+    // 整理完的資料 
+    let b = filterDatas.join("\n")
+    // 發送
+    let applyMsg1 = {
+      "recipient":{
+        "id": receiveData.senderId 
+      },
+      "message":{
+        "type":"text",
+        "text": b
+      }
+     }
+     await axiosGo(applyMsg1)
   }
 }
 
@@ -64,7 +106,6 @@ const textMsgSend = async (receiveData) =>{
     }
    }
    await axiosGo(applyMsg2)
-
 }
 
 // 圖片訊息
@@ -101,8 +142,7 @@ const echoData = (receiveData) =>{
 }
 
 
-
-// 發出訊息 
+// 發出訊息  
 const axiosGo = async (applyData) => {
   try{
     await axios.post(hahaAPI , applyData)
