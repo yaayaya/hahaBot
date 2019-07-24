@@ -18,9 +18,9 @@ module.exports = {
       // 使用者傳送的訊息
       let message = req.body.messaging[0].message.text
       // 使用者事件id
-      let eventID = req.body.messaging[0].message.event_id
+      // let eventID = req.body.messaging[0].message.event_id
       // 使用者 事件指令
-      let botCommand = req.body.message[0].message.bot_command
+      // let botCommand = req.body.message[0].message.bot_command
       // data整合包
 
 
@@ -28,8 +28,8 @@ module.exports = {
         time : time , 
         senderId : senderId , 
         message : message , 
-        eventID : eventID,
-        botCommand : botCommand
+        // eventID : eventID,
+        // botCommand : botCommand
       }
       msgReplyFunction(receiveData)
 
