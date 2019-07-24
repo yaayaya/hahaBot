@@ -17,12 +17,35 @@ module.exports = {
       let senderId = req.body.messaging[0].sender_id
       // 使用者傳送的訊息
       let message = req.body.messaging[0].message.text
+      // 使用者事件id
+      let eventID = req.body.messaging[0].message.event_id
+      // 使用者 事件指令
+      let botCommand = req.body.message[0].message.bot_command
       // data整合包
-      let receiveData = {time : time , senderId : senderId , message : message}
+
+
+      let receiveData = {
+        time : time , 
+        senderId : senderId , 
+        message : message , 
+        eventID : eventID,
+        botCommand : botCommand
+      }
       
-      // 判斷所有收到訊息資料 
-      chooseFunction(receiveData)
-      
+      // 一般文字訊息
+      if (receiveData.message){
+        msgReplyFunction(receiveData)
+      }
+      // 點擊事件情況
+      else if (receiveData.eventID){
+        
+      }
+      else{
+        console.log("大失敗ㄛ");
+      }
+    
+
+
       // 成功時發送狀態200 
       res.status(200).send('ya')
     }catch(err){
@@ -34,7 +57,7 @@ module.exports = {
 }
 
 // 判斷使用者訊息  選出要執行方法
-const chooseFunction = (receiveData) => {
+const msgReplyFunction = (receiveData) => {
   let MessageData = receiveData.message.split("/")
   if (receiveData.message == '文字訊息'){
     textMsgSend(receiveData)
@@ -46,8 +69,8 @@ const chooseFunction = (receiveData) => {
   else if (MessageData[0] == 'Ubike' || MessageData[0] == 'uBike' || MessageData[0]=='ubike'){
     uBikeDataSend(receiveData,MessageData[1])
   }
-  else if (receiveData.message == "t"){
-    uniqueMsgSend(receiveData)
+  else if (receiveData.message == "image"){
+    imgMsgSend(receiveData)
   }
   // 狀況外 回聲
   else{
@@ -138,40 +161,8 @@ const stickerMsgSend = async (receiveData) => {
 
 }
 
-// 特殊介面訊息
-const uniqueMsgSend = async (receiveData) =>{
-  let applyMsg1 = {
-    "recipient":{
-      "id": receiveData.sender_id
-    },
-    "message":{
-      "type":"botStart",
-      "start_img":"<IMAGE_ID>.<IMAGE_EXT>",
-      "init":{
-        "image":"<IMAGE_ID>.<IMAGE_EXT>",
-        "hp":{
-          "max":100,
-          "current":0,
-          "color":"#000000"
-        },
-        "text":{
-          "message":"柚子已經在等你了！遇到不會的問題可以試著去廣場發問求救喔！準備好就請按下開始吧！",
-          "color":"#7A929B"
-        },
-        "button":{
-          "style":2,
-          "setting":[
-            {
-              "disabled":false,
-              "order":1,
-              "text":"開始打柚子(誤) 開始答題！",
-              "command":"/news fight"
-            }
-          ]
-        }
-      }
-    }
-   }
+// 圖片訊息
+const imgMsgSend = async (receiveData) =>{
   let applyMsg2 = {
     "recipient":{
       "id": receiveData.senderId
@@ -200,9 +191,43 @@ const echoData = (receiveData) =>{
     }
    }
    axiosGo(applyData)
-   
 }
 
+// 特殊訊息
+const uniqueMsgSend = async (receiveData) =>{
+  let applyMsg1 = {
+    "recipient":{
+      "id": receiveData.senderId
+    },
+    "message":{
+      "type":"botStart",
+      "start_img":"43f89753cdc02d3ef1fad7e6d353c764.JPG",
+      "init":{
+        "image":"18a41b8037ebcd25f4078037fc97f969.PNG",
+        "hp":{
+          "max":1000,
+          "current":100,
+          "color":"#000000"
+        },
+        "text":{
+          "message": 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab repellat provident mollitia deserunt cum aperiam pariatur placeat ea fuga? At officiis nesciunt obcaecati iste cum cupiditate quod est rem consectetur!',
+          "color":"#7A929B"
+        },
+        "button":{
+          "style":1,
+          "setting":[
+            {
+              "disabled":false,
+              "order":1,
+              "text":"yaaaaaaaaaaaaaaa！",
+              "command":"/news fight"
+            }
+          ]
+        }
+      }
+    }
+   }
+}
 
 // 發出訊息  
 const axiosGo = async (applyData) => {
