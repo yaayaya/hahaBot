@@ -174,7 +174,7 @@ const uniqueMsgSend = async (receiveData) =>{
    }
   let applyMsg2 = {
     "recipient":{
-      "id": receiveData.sender_id
+      "id": receiveData.senderId
     },
     "message":{
       "type":"img",
