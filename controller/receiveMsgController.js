@@ -31,18 +31,19 @@ module.exports = {
         eventID : eventID,
         botCommand : botCommand
       }
-      
-      // 一般文字訊息
-      if (receiveData.message){
-        msgReplyFunction(receiveData)
-      }
-      // 點擊事件情況
-      else if (receiveData.eventID){
-        console.log('進入');
-      }
-      else{
-        console.log("大失敗ㄛ");
-      }
+      msgReplyFunction(receiveData)
+
+      // // 一般文字訊息
+      // if (receiveData.message){
+      //   msgReplyFunction(receiveData)
+      // }
+      // // 點擊事件情況
+      // else if (receiveData.eventID){
+      //   console.log('進入');
+      // }
+      // else{
+      //   console.log("大失敗ㄛ");
+      // }
       // 成功時發送狀態200 
       res.status(200).send('ya')
     }catch(err){
