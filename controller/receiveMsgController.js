@@ -38,7 +38,7 @@ module.exports = {
       }
       // 點擊事件情況
       else if (receiveData.eventID){
-        
+
       }
       else{
         console.log("大失敗ㄛ");
@@ -71,6 +71,9 @@ const msgReplyFunction = (receiveData) => {
   }
   else if (receiveData.message == "image"){
     imgMsgSend(receiveData)
+  }
+  else if (receiveData.message == 't'){
+    uniqueMsgSend(receiveData)
   }
   // 狀況外 回聲
   else{
