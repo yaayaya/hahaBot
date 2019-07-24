@@ -21,3 +21,5 @@ module.exports = {
     }
     
 }
+// 圖片上傳網址 post img
+// 'https://us-central1-hahamut-8888.cloudfunctions.net/imagePush?bot_id=bot@216&access_token=c5e0710601bdc89cf61c'
