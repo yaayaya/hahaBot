@@ -2,7 +2,7 @@ const path = require('path')
 
 // 連線設定 3000 || process.env.PORT, 
 module.exports = {
-    port: process.env.PORT,    
+    port:  process.env.PORT,    
     // db: {
     //     databaser: process.env.DB_NAME || 'parkservice',
     //     user: process.env.DB_USER || null,
@@ -24,8 +24,8 @@ module.exports = {
 // 圖片上傳網址 post img
 // 'https://us-central1-hahamut-8888.cloudfunctions.net/imagePush?bot_id=bot@216&access_token=c5e0710601bdc89cf61c'
 
-// 太陽海豚
+// sunDophin :
 // {"id":"43f89753cdc02d3ef1fad7e6d353c764","ext":"JPG","width":3024,"height":4032}
 
-// bird
+// squireBird :
 // {"id":"18a41b8037ebcd25f4078037fc97f969","ext":"PNG","width":395,"height":254}

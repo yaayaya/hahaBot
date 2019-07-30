@@ -9,10 +9,19 @@ const uBikeApiUrl = 'http://data.ntpc.gov.tw/api/v1/rest/datastore/382000000A-00
 let senderID = null
 
 // 說明書
-// 發送訊息 textMsgSend(text)  
-// 發送貼圖 stickerMsgSend( groupID , stickerID )
-// 發送圖片 imgMsgSend(imgID, imgExt, imgWidth , imgHeight)
+// 發送訊息     textMsgSend(text)                       回覆文字訊息
+// 發送貼圖     stickerMsgSend( groupID , stickerID )   貼圖
+// 發送圖片     imgMsgSend( image )                     圖片物件
+// 特殊事件選單  exMsgSend ()
 
+let images = {
+  // 太陽海豚
+  sunDophin :
+  {"id":"43f89753cdc02d3ef1fad7e6d353c764","ext":"JPG","width":400,"height":1200} ,
+  // 方塊鳥
+  squireBird :
+  {"id":"18a41b8037ebcd25f4078037fc97f969","ext":"PNG","width":395,"height":254}
+}
 
 module.exports = {
   async filterData (req,res) {
@@ -56,10 +65,11 @@ const msgReplyFunction = (message) => {
     uBikeDataSend(MessageData[1])
   }
   else if (message == "c"){
-    imgMsgSend(message)
+    imgMsgSend(images.sunDophin)
   }
+  // 特殊事件
   else if (message == 'd'){
-    exMsgSend(message)
+    exMsgMenuSend(message)
   }
   // 狀況外 回聲 message 傳送message
   else{
@@ -96,8 +106,6 @@ const uBikeDataSend = async(location)=>{
  
 }
 
-
-
 // 文字訊息傳送
 const textMsgSend = async (text) =>{
   try{
@@ -116,7 +124,6 @@ const textMsgSend = async (text) =>{
   }
 
 }
-
 // 貼圖訊息 
 const stickerMsgSend = async (sticker_group,sticker_id) => {
   try{
@@ -135,40 +142,38 @@ const stickerMsgSend = async (sticker_group,sticker_id) => {
     textMsgSend(err)
   }
 }
-
 // 圖片訊息
-const imgMsgSend = async (imgID, imgEXT, imgWidth , imgHeight) =>{
+const imgMsgSend = async (image) =>{
   let applyMsg = {
     "recipient":{
       "id": senderID
     },
     "message":{
       "type":"img",
-      "id": '43f89753cdc02d3ef1fad7e6d353c764',
-      "ext":"JPG",
-      "width":"3024",
-      "height":"4032"
+      "id": image.id ,
+      "ext": image.ext,
+      "width": image.width,
+      "height": image.height
     }
    }
    axiosGo(applyMsg)
 }
 
-// , startImgID , startImgEXT , initImgID , initImgEXT
-// 特殊訊息
-const exMsgSend = async (message ) =>{
+// 初始特殊訊息選單 
+const exMsgMenuSend = async (message , startImg , initImg) =>{
   let applyMsg = {
     "recipient":{
       "id": senderID
     },
     "message":{
       "type":"botStart",
-      "start_img":"43f89753cdc02d3ef1fad7e6d353c764.JPG",
+      "start_img": `${startImg.id}.${startImg.ext}`,
       "init":{
-        "image":"18a41b8037ebcd25f4078037fc97f969.PNG",
+        "image": `${initImg.id}.${initImg.ext}`,
         "hp":{
-          "max":1000,
+          "max":100,
           "current":100,
-          "color":"#000000"
+          "color":"#EB698B"
         },
         "text":{
           "message": message,
@@ -190,8 +195,13 @@ const exMsgSend = async (message ) =>{
    }
    axiosGo(applyMsg)
 }
+// 特殊訊息
+const exMsgSend = async (message) => {
 
-// 發出訊息  axios Go
+}
+
+
+// 發出訊息  axios GoGoGo
 const axiosGo = async (applyData) => {
   try{
     await axios.post(hahaAPI , applyData)
@@ -206,3 +216,57 @@ const getRandomNum = (min , max ) =>{
   return strNum
 }
 
+// 設置 hp  (最大HP , 當前HP , HP顏色)
+const setHP = (maxHP , currentHP , colorID) => {
+  if (!colorID) {
+    colorID = '#f22805'
+  }
+  let hp = 
+  `
+    "hp":{
+      "max":${maxHP},
+      "current":${currentHP},
+      "color": ${colorID}
+    }
+    `
+  return hp
+}
+// 設置 text   (文字內容 , 顏色)
+const setExMsgText = ( exMsgText , colorID) => {
+  if (!colorID) {
+    colorID = '#EB698B'
+  }
+  let text = 
+  `
+    "text":{
+      "message":${exMsgText},
+      "color": ${colorID}
+    }
+  `
+  return text
+}
+console.log(setExMsgText('今天天氣很好ㄛ'));
+
+// 設置button
+const setButton = ( btnNum ,btnData) => {
+  if (!colorID) {
+    colorID = '#EB698B'
+  }
+  let btnData = null
+  for (i = 0 ; i < btnNum; i++ ) {
+
+  }
+
+
+
+  let button = 
+  `
+    "button":{
+      "style":2,
+      "setting":[
+        ${btnData}
+      ]
+    }
+  `
+  return text
+}
