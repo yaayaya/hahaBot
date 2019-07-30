@@ -17,7 +17,6 @@ let senderID = null
 module.exports = {
   async filterData (req,res) {
     try{
-      let data = req.body.messaging[0]
       // 傳送時間
       let time = req.body.time
       // 使用者ID
@@ -25,9 +24,9 @@ module.exports = {
       // 使用者傳送的訊息
       let message = req.body.messaging[0].message.text
       // 使用者事件id
-      let eventID = data.event_id
+      let eventID = req.body.messaging[0].event_id
       // 使用者 事件指令
-      let botCommand = data.bot_command
+      let botCommand = req.body.messaging[0].bot_command
 
       // 文字訊息時  下去判斷
       msgReplyFunction(message)
@@ -45,11 +44,12 @@ module.exports = {
 // 判斷使用者訊息  選出要執行方法
 const msgReplyFunction = (message) => {
   let MessageData = message.split("/")
+  // switch(message) {}
   if (message == 'a'){
-    textMsgSend(message)
+    textMsgSend('test')
   }
   else if (message == 'b'){
-    stickerMsgSend( getRandomNum(1,20) , getRandomNum(1,20))
+    stickerMsgSend( getRandomNum(1,12) , getRandomNum(1,12))
   }
   // 如果是 ubike/XXX 形式的話 傳送至ubike判斷 [0] ubike [1] 地區名字
   else if (MessageData[0] == 'Ubike' || MessageData[0] == 'uBike' || MessageData[0]=='ubike'){
@@ -59,7 +59,7 @@ const msgReplyFunction = (message) => {
     imgMsgSend(message)
   }
   else if (message == 'd'){
-    uniqueMsgSend(message)
+    exMsgSend(message)
   }
   // 狀況外 回聲 message 傳送message
   else{
@@ -137,8 +137,8 @@ const stickerMsgSend = async (sticker_group,sticker_id) => {
 }
 
 // 圖片訊息
-const imgMsgSend = async (imgID, imgExt, imgWidth , imgHeight) =>{
-  let applyMsg2 = {
+const imgMsgSend = async (imgID, imgEXT, imgWidth , imgHeight) =>{
+  let applyMsg = {
     "recipient":{
       "id": senderID
     },
@@ -150,14 +150,15 @@ const imgMsgSend = async (imgID, imgExt, imgWidth , imgHeight) =>{
       "height":"4032"
     }
    }
-   axiosGo(applyMsg2)
+   axiosGo(applyMsg)
 }
 
+// , startImgID , startImgEXT , initImgID , initImgEXT
 // 特殊訊息
-const uniqueMsgSend = async (receiveData) =>{
-  let applyMsg1 = {
+const exMsgSend = async (message ) =>{
+  let applyMsg = {
     "recipient":{
-      "id": receiveData.senderId
+      "id": senderID
     },
     "message":{
       "type":"botStart",
@@ -170,7 +171,7 @@ const uniqueMsgSend = async (receiveData) =>{
           "color":"#000000"
         },
         "text":{
-          "message": 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab repellat provident mollitia deserunt cum aperiam pariatur placeat ea fuga? At officiis nesciunt obcaecati iste cum cupiditate quod est rem consectetur!',
+          "message": message,
           "color":"#7A929B"
         },
         "button":{
@@ -187,6 +188,7 @@ const uniqueMsgSend = async (receiveData) =>{
       }
     }
    }
+   axiosGo(applyMsg)
 }
 
 // 發出訊息  axios Go
