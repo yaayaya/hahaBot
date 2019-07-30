@@ -5,46 +5,34 @@ const hahaAPI  = 'https://us-central1-hahamut-8888.cloudfunctions.net/messagePus
 
 const uBikeApiUrl = 'http://data.ntpc.gov.tw/api/v1/rest/datastore/382000000A-000352-001'
 
-// 圖片上傳網
+// 全域資料  使用者當前狀態等
+let senderID = null
+
+// 說明書
+// 發送訊息 textMsgSend(text)  
+// 發送貼圖 stickerMsgSend( groupID , stickerID )
+
 
 
 module.exports = {
   async filterData (req,res) {
     try{
+      let data = req.body.messaging[0]
       // 傳送時間
       let time = req.body.time
       // 使用者ID
-      let senderId = req.body.messaging[0].sender_id
+      senderID = req.body.messaging[0].sender_id
       // 使用者傳送的訊息
       let message = req.body.messaging[0].message.text
       // 使用者事件id
-      // let eventID = req.body.messaging[0].message.event_id
+      let eventID = data.event_id
       // 使用者 事件指令
-      // let botCommand = req.body.message[0].message.bot_command
-      // data整合包
+      let botCommand = data.bot_command
+
+      // 文字訊息時  下去判斷
+      msgReplyFunction(message)
 
 
-      let receiveData = {
-        time : time , 
-        senderId : senderId , 
-        message : message , 
-        // eventID : eventID,
-        // botCommand : botCommand
-      }
-      msgReplyFunction(receiveData)
-
-      // // 一般文字訊息
-      // if (receiveData.message){
-      //   msgReplyFunction(receiveData)
-      // }
-      // // 點擊事件情況
-      // else if (receiveData.eventID){
-      //   console.log('進入');
-      // }
-      // else{
-      //   console.log("大失敗ㄛ");
-      // }
-      // 成功時發送狀態200 
       res.status(200).send('ya')
     }catch(err){
       res.status(500).send({
@@ -55,27 +43,27 @@ module.exports = {
 }
 
 // 判斷使用者訊息  選出要執行方法
-const msgReplyFunction = (receiveData) => {
-  let MessageData = receiveData.message.split("/")
-  if (receiveData.message == '文字訊息'){
-    textMsgSend(receiveData)
+const msgReplyFunction = (message) => {
+  let MessageData = message.split("/")
+  if (message == 'a'){
+    textMsgSend(message)
   }
-  else if (receiveData.message == '貼圖訊息'){
-    stickerMsgSend(receiveData)
+  else if (message == 'b'){
+    stickerMsgSend( getRandomNum(1,20) , getRandomNum(1,20))
   }
   // 如果是 ubike/XXX 形式的話 傳送至ubike判斷 [0] ubike [1] 地區名字
   else if (MessageData[0] == 'Ubike' || MessageData[0] == 'uBike' || MessageData[0]=='ubike'){
     uBikeDataSend(receiveData,MessageData[1])
   }
-  else if (receiveData.message == "image"){
-    imgMsgSend(receiveData)
+  else if (message == "c"){
+    imgMsgSend(message)
   }
-  else if (receiveData.message == 't'){
-    uniqueMsgSend(receiveData)
+  else if (message == 'd'){
+    uniqueMsgSend(message)
   }
-  // 狀況外 回聲
+  // 狀況外 回聲 message 傳送message
   else{
-    echoData(receiveData)
+    textMsgSend(message)
   }
 }
 
@@ -93,73 +81,44 @@ const uBikeDataSend = async(receiveData,location)=>{
       }
     }
     // 整理完的資料 
-    let b = filterDatas.join("\n")
+    let data = filterDatas.join("\n")
     // 發送a
-    let applyMsg1 = {
-      "recipient":{
-        "id": receiveData.senderId 
-      },
-      "message":{
-        "type":"text",
-        "text": b
-      }
-     }
-     await axiosGo(applyMsg1)
+    textMsgSend(data)
   }
   else {
-       // 發送
-       let applyMsg1 = {
-        "recipient":{
-          "id": receiveData.senderId 
-        },
-        "message":{
-          "type":"text",
-          "text": '大失敗'
-        }
-       }
-       await axiosGo(applyMsg1) 
+    textMsgSend('大失敗')
   }
 }
 
-// 文字訊息 function
-const textMsgSend = async (receiveData) =>{
-  let applyMsg1 = {
+
+
+// 文字訊息傳送
+const textMsgSend = async (text) =>{
+  let applyMsg = {
     "recipient":{
-      "id": receiveData.senderId 
+      "id": senderID 
     },
     "message":{
       "type":"text",
-      "text":"這裡是文字訊息ya  下面展示send的json"
+      "text": text
     }
    }
-   await axiosGo(applyMsg1)
-   let applyMsg2 = {
-    "recipient":{
-      "id": receiveData.senderId 
-    },
-    "message":{
-      "type":"text",
-      "text":  JSON.stringify(applyMsg1)
-    }
-   }
-   await axiosGo(applyMsg2)
+   await axiosGo(applyMsg)
 }
 
-// 貼圖訊息
-const stickerMsgSend = async (receiveData) => {
-  let applyMsg1 = {
+// 貼圖訊息 
+const stickerMsgSend = async (sticker_group,sticker_id) => {
+  let applyMsg = {
     "recipient":{
-      "id": receiveData.senderId
+      "id": senderID
     },
     "message":{
       "type":"sticker",
-      "sticker_group": '25',
-      "sticker_id": '12'
+      "sticker_group": sticker_group,
+      "sticker_id" : sticker_id
     }
    }
-   await axiosGo(applyMsg1)
-
-
+   await axiosGo(applyMsg)
 }
 
 // 圖片訊息
@@ -177,21 +136,6 @@ const imgMsgSend = async (receiveData) =>{
     }
    }
    axiosGo(applyMsg2)
-}
-
-// 回音機
-const echoData = (receiveData) =>{
-  // echo 回覆訊息設定
-  let applyData = {
-    "recipient":{
-      "id": receiveData.senderId 
-    },
-    "message":{
-      "type":"text",
-      "text": receiveData.message
-    }
-   }
-   axiosGo(applyData)
 }
 
 // 特殊訊息
@@ -230,7 +174,7 @@ const uniqueMsgSend = async (receiveData) =>{
    }
 }
 
-// 發出訊息  
+// 發出訊息  axios Go
 const axiosGo = async (applyData) => {
   try{
     await axios.post(hahaAPI , applyData)
@@ -238,3 +182,10 @@ const axiosGo = async (applyData) => {
     error: 'axiosGo Error ' + (err)
   }
 }
+
+// 隨機數(字串)回傳
+const getRandomNum = (min , max ) =>{
+  strNum = String(Math.floor(Math.random()*max)+ min)
+  return strNum
+}
+
