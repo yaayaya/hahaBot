@@ -11,7 +11,7 @@ let senderID = null
 // 說明書
 // 發送訊息 textMsgSend(text)  
 // 發送貼圖 stickerMsgSend( groupID , stickerID )
-
+// 發送圖片 imgMsgSend(imgID, imgExt, imgWidth , imgHeight)
 
 
 module.exports = {
@@ -68,7 +68,7 @@ const msgReplyFunction = (message) => {
 }
 
 // uBike 查詢指令接收
-const uBikeDataSend = async(receiveData,location)=>{  
+const uBikeDataSend = async(message,location)=>{  
   const uBikeDatas = (await axios.get(uBikeApiUrl)).data
   if (uBikeDatas.success == true){
     // 創造空陣列裝填整理資料
@@ -122,10 +122,10 @@ const stickerMsgSend = async (sticker_group,sticker_id) => {
 }
 
 // 圖片訊息
-const imgMsgSend = async (receiveData) =>{
+const imgMsgSend = async (imgID, imgExt, imgWidth , imgHeight) =>{
   let applyMsg2 = {
     "recipient":{
-      "id": receiveData.senderId
+      "id": senderID
     },
     "message":{
       "type":"img",
