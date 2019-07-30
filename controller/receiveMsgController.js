@@ -100,31 +100,40 @@ const uBikeDataSend = async(location)=>{
 
 // 文字訊息傳送
 const textMsgSend = async (text) =>{
-  let applyMsg = {
-    "recipient":{
-      "id": senderID 
-    },
-    "message":{
-      "type":"text",
-      "text": text
-    }
-   }
-   await axiosGo(applyMsg)
+  try{
+    let applyMsg = {
+      "recipient":{
+        "id": senderID 
+      },
+      "message":{
+        "type":"text",
+        "text": text
+      }
+     }
+     await axiosGo(applyMsg)
+  }catch(err){
+    textMsgSend(err)
+  }
+
 }
 
 // 貼圖訊息 
 const stickerMsgSend = async (sticker_group,sticker_id) => {
-  let applyMsg = {
-    "recipient":{
-      "id": senderID
-    },
-    "message":{
-      "type":"sticker",
-      "sticker_group": sticker_group,
-      "sticker_id" : sticker_id
-    }
-   }
-   await axiosGo(applyMsg)
+  try{
+    let applyMsg = {
+      "recipient":{
+        "id": senderID
+      },
+      "message":{
+        "type":"sticker",
+        "sticker_group": sticker_group,
+        "sticker_id" : sticker_id
+      }
+     }
+     await axiosGo(applyMsg)
+  }catch(err){
+    textMsgSend(err)
+  }
 }
 
 // 圖片訊息
