@@ -53,7 +53,7 @@ const msgReplyFunction = (message) => {
   }
   // 如果是 ubike/XXX 形式的話 傳送至ubike判斷 [0] ubike [1] 地區名字
   else if (MessageData[0] == 'Ubike' || MessageData[0] == 'uBike' || MessageData[0]=='ubike'){
-    uBikeDataSend(receiveData,MessageData[1])
+    uBikeDataSend(MessageData[1])
   }
   else if (message == "c"){
     imgMsgSend(message)
@@ -68,26 +68,32 @@ const msgReplyFunction = (message) => {
 }
 
 // uBike 查詢指令接收
-const uBikeDataSend = async(message,location)=>{  
-  const uBikeDatas = (await axios.get(uBikeApiUrl)).data
-  if (uBikeDatas.success == true){
-    // 創造空陣列裝填整理資料
-    let filterDatas = []
-    // 整理資料
-    for (let i = 0; i < (uBikeDatas.result.records).length; i++) {
-      // 判定區域
-      if (uBikeDatas.result.records[i].sarea == location){
-        filterDatas.push(uBikeDatas.result.records[i].sna)
+const uBikeDataSend = async(location)=>{  
+  try{
+    const uBikeDatas = (await axios.get(uBikeApiUrl)).data
+  
+    if (uBikeDatas.success == true){
+      // 創造空陣列裝填整理資料
+      let filterDatas = []
+      // 整理資料
+      for (let i = 0; i < (uBikeDatas.result.records).length; i++) {
+        // 判定區域
+        if (uBikeDatas.result.records[i].sarea == location){
+          filterDatas.push(uBikeDatas.result.records[i].sna)
+        }
       }
+      // 整理完的資料 
+      let data = filterDatas.join("\n")
+      // 發送a
+      textMsgSend(data)
     }
-    // 整理完的資料 
-    let data = filterDatas.join("\n")
-    // 發送a
-    textMsgSend(data)
+    else {
+      textMsgSend('大失敗')
+    }
+  }catch(err){
+    textMsgSend(err)
   }
-  else {
-    textMsgSend('大失敗')
-  }
+ 
 }
 
 
